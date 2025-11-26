@@ -1,0 +1,28 @@
+.showroom-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background-color: black;
+    color: white;
+    padding: 10px 0;
+}
+
+.scrolling-content {
+    display: flex;
+    white-space: nowrap;
+    animation: scroll-right 20s linear infinite;
+}
+
+.scrolling-content span {
+    padding: 0 15rem;
+    flex-shrink: 0;
+}
+
+@keyframes scroll-right {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
