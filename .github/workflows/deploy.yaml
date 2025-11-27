@@ -37,7 +37,7 @@ jobs:
           region=${{ secrets.OCI_REGION }}
           EOF
 
-          echo "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
+          echo "${{ secrets.OCI_API_KEY }}" > ~/.oci/oci_api_key.pem
           chmod 600 ~/.oci/oci_api_key.pem
           chmod 600 ~/.oci/config
 
