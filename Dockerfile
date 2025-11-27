@@ -23,8 +23,7 @@ FROM nginx:alpine
 # Copia los archivos build desde la etapa "builder" hacia la carpeta pública de nginx
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# (Opcional) Si tienes configuración especial de rutas en React (history / SPA), puedes copiar un nginx.conf
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expone el puerto 80 (HTTP)
 EXPOSE 80
