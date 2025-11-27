@@ -45,12 +45,7 @@ jobs:
       - name: Get kubeconfig
         run: |
           mkdir -p ~/.kube
-          oci ce cluster create-kubeconfig \
-          --cluster-id ${{ secrets.OKE_CLUSTER_ID }} \
-          --region ${{ secrets.OCI_REGION }} \
-          --file ~/.kube/config \
-          --token-version 2.0.0 \
-          --kube-endpoint PUBLIC_ENDPOINT
+          oci ce cluster create-kubeconfig --cluster-id ${{ secrets.OKE_CLUSTER_ID }} --region ${{ secrets.OCI_REGION }} --file ~/.kube/config --token-version 2.0.0 --kube-endpoint PUBLIC_ENDPOINT
 
       # Login to OCIR
       - name: Login to OCIR
