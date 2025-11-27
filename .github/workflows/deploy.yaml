@@ -52,7 +52,7 @@ jobs:
         run: |
           echo "${{ secrets.OCIR_PASSWORD }}" | docker login \
             ${{ secrets.OCI_REGION }}.ocir.io \
-            -u "${{ secrets.OCIR_USERNAME }}" \
+            --username "${{ secrets.OCIR_USERNAME }}" \
             --password-stdin
 
       # Build & push the Docker image
