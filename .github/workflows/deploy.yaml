@@ -59,12 +59,13 @@ jobs:
       - name: Build and push Docker image
         run: |
           IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:$(date +%s)"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
           docker build -t $IMAGE .
           docker push $IMAGE
 
       - name: Update Deployment
         run: |
-          kubectl set image deployment/brutal-deployment brutal=$IMAGE
+          kubectl set image deployment/brutal brutal=$IMAGE
 
       # Debug kubectl
       - name: Debug kubectl
