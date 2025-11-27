@@ -66,6 +66,8 @@ jobs:
 
       - name: Update Deployment
         run: |
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:${SHORT_SHA}"
           kubectl set image deployment/brutal brutal=$IMAGE
 
       # Debug kubectl
