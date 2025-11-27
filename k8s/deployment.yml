@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: brutal-deployment
+  labels:
+    app: brutal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: brutal
+  template:
+    metadata:
+      labels:
+        app: brutal
+    spec:
+      imagePullSecrets:
+        - name: ocirsecret
+      containers:
+        - name: brutal
+          image: us-ashburn-1.ocir.io/iduqwkepwfyc/brutal:latest
+          ports:
+            - containerPort: 3000

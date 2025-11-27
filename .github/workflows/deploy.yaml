@@ -1,0 +1,53 @@
+name: Deploy to OKE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.OCIR_REGION }}/${{ secrets.OCIR_NAMESPACE }}/brutal:latest .
+
+      # Login to OCIR
+      - name: Login OCIR
+        run: |
+          echo "${{ secrets.OCIR_TOKEN }}" | docker login ${{ secrets.OCIR_REGION }} \
+            -u "${{ secrets.OCIR_USERNAME }}" --password-stdin
+
+      # Push image
+      - name: Push image to OCIR
+        run: |
+          docker push ${{ secrets.OCIR_REGION }}/${{ secrets.OCIR_NAMESPACE }}/brutal:latest
+
+      # Install kubectl + OCI CLI
+      - name: Install kubectl
+        run: |
+          sudo snap install kubectl --classic
+
+      - name: Install OCI CLI
+        uses: oracle-actions/install-oci-cli@v1
+
+      # Configure kubeconfig
+      - name: Configure kubeconfig
+        run: |
+          oci ce cluster create-kubeconfig \
+            --cluster-id ocid1.cluster.oc1.iad.aaaaaaaalvbko37ivteogrfviqjwlruaev7qspjiaehbg244bctqeyebaaqq \
+            --region us-ashburn-1 \
+            --file $HOME/.kube/config \
+            --token-version 2.0.0 \
+            --kube-endpoint PUBLIC_ENDPOINT
+
+      # Deploy to cluster
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/
