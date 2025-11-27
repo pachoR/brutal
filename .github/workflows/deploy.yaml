@@ -58,9 +58,13 @@ jobs:
       # Build & push the Docker image
       - name: Build and push Docker image
         run: |
-          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:latest"
+          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:$(data +%s)"
           docker build -t $IMAGE .
           docker push $IMAGE
+
+      - name: Update Deployment
+        run: |
+          kubectl set image deployment/brutal-deployment brutal=$IMAGE
 
       # Debug kubectl
       - name: Debug kubectl
