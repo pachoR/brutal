@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: brutal-deployment
+  name: brutal
   namespace: default
   labels:
     app: brutal
