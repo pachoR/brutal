@@ -58,7 +58,7 @@ jobs:
       # Build & push the Docker image
       - name: Build and push Docker image
         run: |
-          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:$(data +%s)"
+          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:$(date +%s)"
           docker build -t $IMAGE .
           docker push $IMAGE
 
