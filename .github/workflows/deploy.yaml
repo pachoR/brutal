@@ -2,50 +2,30 @@ name: Deploy to OKE
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      # Install OCI CLI manually (official method)
+      # Install OCI CLI
       - name: Install OCI CLI
         run: |
-          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh \
-            -o install.sh
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh -o install.sh
           chmod +x install.sh
           ./install.sh --accept-all-defaults
-
           echo "$HOME/bin" >> $GITHUB_PATH
 
-      # Configure OCI CLI
-      - name: Configure OCI
+      # Verify OCI CLI works
+      - name: Verify OCI CLI
         run: |
-          mkdir -p ~/.oci
-          echo "${{ secrets.OCI_API_KEY }}" > ~/.oci/oci_api_key.pem
-          chmod 600 ~/.oci/oci_api_key.pem
+          oci --version
 
-          cat <<EOF > ~/.oci/config
-          [DEFAULT]
-          user=${{ secrets.OCI_USER_OCID }}
-          fingerprint=${{ secrets.OCI_FINGERPRINT }}
-          key_file=~/.oci/oci_api_key.pem
-          tenancy=${{ secrets.OCI_TENANCY_OCID }}
-          region=${{ secrets.OCI_REGION }}
-          EOF
-
-      # Install kubectl
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: latest
-
-      # Get kubeconfig for OKE cluster
+      # Get kubeconfig for OKE
       - name: Get kubeconfig
         run: |
           mkdir -p ~/.kube
@@ -59,24 +39,27 @@ jobs:
       # Login to OCIR
       - name: Login to OCIR
         run: |
-          echo "${{ secrets.OCIR_PASSWORD }}" | docker login ${{ secrets.OCI_REGION }}.ocir.io \
-            -u "${{ secrets.OCIR_USERNAME }}" --password-stdin
+          echo "${{ secrets.OCIR_PASSWORD }}" | docker login \
+            ${{ secrets.OCI_REGION }}.ocir.io \
+            -u "${{ secrets.OCIR_USERNAME }}" \
+            --password-stdin
 
-      # Build and push image
+      # Build & push the Docker image
       - name: Build and push Docker image
         run: |
-          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCIR_NAMESPACE }}/myapp:latest"
+          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:latest"
           docker build -t $IMAGE .
           docker push $IMAGE
 
+      # Debug kubectl
       - name: Debug kubectl
         run: |
           kubectl config view
           kubectl get ns
           kubectl get secrets --all-namespaces
 
-      # Deploy to OKE
-      - name: Apply Kubernetes manifests
+      # Apply Kubernetes manifests
+      - name: Apply K8s Manifests
         run: |
           kubectl apply -f k8s/deployment.yml
           kubectl apply -f k8s/service.yml
