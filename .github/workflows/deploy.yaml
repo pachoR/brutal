@@ -58,7 +58,8 @@ jobs:
       # Build & push the Docker image
       - name: Build and push Docker image
         run: |
-          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:$(date +%s)"
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:${SHORT_SHA}"
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
           docker build -t $IMAGE .
           docker push $IMAGE
