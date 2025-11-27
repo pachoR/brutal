@@ -4,7 +4,7 @@ metadata:
   name: brutal-deployment
   namespace: default
   labels:
-    app: brutal
+    app: brutal-deployment
 spec:
   replicas: 1
   selector:
