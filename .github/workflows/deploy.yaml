@@ -55,6 +55,20 @@ jobs:
             --username "${{ secrets.OCI_USERNAME }}" \
             --password-stdin
 
+
+      # Apply Deployment and Service manifests
+      - name: Apply K8s Manifests
+        run: |
+          kubectl apply -f k8s/deployment.yml
+          kubectl apply -f k8s/service.yml
+
+      # Update Deployment with SHA-tag image
+      - name: Update Deployment
+        run: |
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          IMAGE="${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/brutal:${SHORT_SHA}"
+          kubectl set image deployment/brutal-deployment brutal=$IMAGE
+
       # Build & push the Docker image
       - name: Build and push Docker image
         run: |
@@ -77,7 +91,3 @@ jobs:
           kubectl get ns
           kubectl get secrets --all-namespaces
 
-      # Apply Kubernetes manifests
-      - name: Apply K8s Manifests
-        run: |
-          kubectl apply -f k8s/service.yml
