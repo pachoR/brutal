@@ -22,4 +22,4 @@ spec:
           image: us-ashburn-1.ocir.io/iduqwkepwfyc/brutal:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - containerPort: 80
