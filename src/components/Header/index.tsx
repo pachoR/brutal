@@ -19,7 +19,7 @@ const Header: React.FC = () => {
                 }}
             >
                 <h1>
-                    <i>LA</i>BOR<i>WE</i>ST PIPO
+                    <i>LA</i>BOR<i>WE</i>ST no-PIPO
                 </h1>
             </div>
         </div>
